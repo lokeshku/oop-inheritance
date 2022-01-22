@@ -1,0 +1,67 @@
+*&---------------------------------------------------------------------*
+*& Report Z_OOPS_INHERITANCE
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z_OOPS_INHERITANCE1.
+
+class lk_lk DEFINITION.
+  PUBLIC SECTION.
+  DATA : a type i,
+         b TYPE i,
+         c TYPE i.
+  METHODS: display,
+           mm1.
+  CLASS-METHODS: mm2.
+  ENDCLASS.
+  CLASS lk_lk IMPLEMENTATION.
+    METHOD display.
+      WRITE :/ ' this is parent class' COLOR 7.
+      ENDMETHOD.
+
+      METHOD mm1.
+      WRITE :/ ' this is mm1 in parent class'.
+      ENDMETHOD.
+
+      METHOD mm2.
+        WRITE :/ ' this is the static method' COLOR 2.
+        WRITE :/ ' this is mm2 method in super class' COLOR 2.
+        ENDMETHOD.
+        ENDCLASS.
+
+class lk_sub DEFINITION INHERITING FROM lk_lk.
+  PUBLIC SECTION.
+  DATA : a1 type i,
+         b1 TYPE i,
+         c1 TYPE i.
+  METHODS : display REDEFINITION,
+  sub.
+  ENDCLASS.
+
+  class lk_sub IMPLEMENTATION.
+
+    METHOD display.
+      WRITE :/ ' this is the class overwrite method' COLOR 3.
+      ENDMETHOD.
+      METHOD sub.
+        WRITE :/ 'this is the sub class method' COLOR 3.
+        ENDMETHOD.
+      ENDCLASS.
+        DATA : obj TYPE ref to lk_sub.
+        START-OF-SELECTION.
+        create OBJECT obj.
+        call METHOD obj->display.
+        CALL METHOD obj->sub.
+        WRITE :/ 'this is the super class method called by sub class obect' COLOR 5.
+        SKIP 1.
+         call METHOD obj->mm1.
+         CALL METHOD obj->mm2.
+
+         DATA : obj1 TYPE REF TO lk_lk.
+         START-OF-SELECTION.
+         create OBJECT obj1.
+         SKIP 3.
+         WRITE :/ 'we can call only super class method by using super clss object' COLOR 5.
+         CALL METHOD obj1->display.
+         CALL METHOD obj1->mm1.
+         CALL METHOD obj1->mm2.
